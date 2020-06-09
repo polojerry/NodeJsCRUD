@@ -32,7 +32,7 @@ module.exports= {
             }
 
             if(!results){
-                return results.json({
+                return res.json({
                     success : 0,
                     message : "Record Not Found"
                 });
@@ -54,7 +54,7 @@ module.exports= {
             }
             return res.json({
                 success: 1,
-                data : results[0]
+                data : results
 
             });
         });
@@ -67,7 +67,8 @@ module.exports= {
 
         updateUser(body,(err, results)=>{
             if(err){
-                console.log(err)
+                console.log(err);
+                return;
             }
 
             return res.json({
@@ -79,19 +80,12 @@ module.exports= {
     },
     
     deleteUser : (req, res)=>{
-        const data = req.data;
-        deleteUser(userId, (err, results)=>{
+        const body = req.body;
+        deleteUser(body, (err, results)=>{
             if(err){
                 console.log(err);
             }
-
-            if(!results){
-                return results.json({
-                    success : 0,
-                    message : "Record Not Found"
-                });
-            }
-
+            
             return res.json({
                 success:1,
                 message: "User Deleted Succesfully"

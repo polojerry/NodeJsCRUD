@@ -19,7 +19,7 @@ module.exports = {
         );
     },
 
-    getUsers: (data, callback)=>{
+    getUsers: callback=>{
         pool.query(
             `SELECT firstName,lastName,email,password FROM user_details`,
             [],
@@ -32,9 +32,9 @@ module.exports = {
         );
     },
 
-    getUserById: (data, callback)=>{
-        pool.query(`SELECT firstName,lastName,email,password FROM user_details WHERE use_id =?`,
-        [data.user_id],
+    getUserById: (user_id, callback)=>{
+        pool.query(`SELECT firstName,lastName,email,password FROM user_details WHERE user_id =?`,
+        [user_id],
         (err, res,fields)=>{
             if(err){
                 return callback(err);
@@ -46,7 +46,7 @@ module.exports = {
     },
 
     updateUser: (data, callBack)=>{
-        pool.query(`UPDATE user_details set firstName = ?,lastName = ?,email = ?, password WHERE use_id =?`,
+        pool.query(`UPDATE user_details set firstName=?,lastName=?,email=?, password=? WHERE user_id =?`,
         [
             data.firstName,
                 data.lastName,
@@ -54,7 +54,7 @@ module.exports = {
                 data.password,
                 data.user_id
         ],
-        (err, res)=>{
+        (err, res, fields)=>{
             if(err){
                 return callBack(err);
             }
@@ -66,7 +66,7 @@ module.exports = {
     },
 
     deleteUser: (data, callBack)=>{
-        pool.query(`DELETE from user_details WHERE id=?`,
+        pool.query(`DELETE from user_details WHERE user_id=?`,
         [data.user_id],
         (err, res)=>{
             if(err){
