@@ -128,7 +128,7 @@ module.exports= {
             
             if(result){
                 results.password == undefined
-               const jsonToken =sign({result : results}, "babalao",{
+               const jsonToken =sign({result : results},process.env.SECRET_PRIVATE_KEY,{
                    expiresIn: "1h"
                });
 
