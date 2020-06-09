@@ -1,4 +1,4 @@
-const {create} = require("../users/user.service")
+const {create, getUsers, getUserById, updateUser, deleteUser} = require("../users/user.service")
 const {genSaltSync, hashSync} = require("bcrypt")
 
 module.exports= {
@@ -22,6 +22,88 @@ module.exports= {
             });
         });
 
-    }
+    },
+
+    getUserByUserId : (req, res)=>{
+        const userId = req.params.user_id;
+        getUserById(userId, (err, results)=>{
+            if(err){
+                console.log(err);
+            }
+
+            if(!results){
+                return results.json({
+                    success : 0,
+                    message : "Record Not Found"
+                });
+            }
+
+            return res.json({
+                success:1,
+                data: results
+            });
+        }
+        );
+
+    },
+
+    getUsers : (req, res)=>{
+        getUsers((err, results)=>{
+            if(err){
+                console.log(err)
+            }
+            return res.json({
+                success: 1,
+                data : results[0]
+
+            });
+        });
+    },
+
+    updateUser : (req, res)=>{
+        const body = req.body;
+        const salt = genSaltSync(10);
+        body.password = hashSync(body.password, salt);
+
+        updateUser(body,(err, results)=>{
+            if(err){
+                console.log(err)
+            }
+
+            return res.json({
+                success: 1,
+                message: "Updated Sucessfully" 
+            });
+        });
+
+    },
+    
+    deleteUser : (req, res)=>{
+        const data = req.data;
+        deleteUser(userId, (err, results)=>{
+            if(err){
+                console.log(err);
+            }
+
+            if(!results){
+                return results.json({
+                    success : 0,
+                    message : "Record Not Found"
+                });
+            }
+
+            return res.json({
+                success:1,
+                message: "User Deleted Succesfully"
+            });
+        }
+        );
+
+    },
+
+
+
+
+
 
 }
