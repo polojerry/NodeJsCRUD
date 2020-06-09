@@ -1,5 +1,6 @@
-const {create, getUsers, getUserById, updateUser, deleteUser} = require("../users/user.service")
-const {genSaltSync, hashSync} = require("bcrypt")
+const {create, getUsers, getUserById, updateUser, deleteUser, getUserByEmail} = require("../users/user.service")
+const {genSaltSync, hashSync, compareSync} = require("bcrypt")
+const {sign} = require("jsonwebtoken")
 
 module.exports= {
     createUser : (req, res)=>{
@@ -71,6 +72,13 @@ module.exports= {
                 return;
             }
 
+            if(!results){
+                return res.json({
+                    success:0,
+                    message: "Failed to Update User"
+                });
+            }
+
             return res.json({
                 success: 1,
                 message: "Updated Sucessfully" 
@@ -85,7 +93,14 @@ module.exports= {
             if(err){
                 console.log(err);
             }
-            
+
+            if(!results){
+                return res.json({
+                    success:0,
+                    message: "Failed to Delete User"
+                });
+            }
+
             return res.json({
                 success:1,
                 message: "User Deleted Succesfully"
@@ -95,9 +110,42 @@ module.exports= {
 
     },
 
+    loginuser: (req, res)=>{
+        const body = req.body;
+        getUserByEmail(body.email, (err, results)=>{
+            if(err){
+                console.log(err);
+            }
 
+            if(!results){
+                return res.json({
+                    success: 0,
+                    message : "Invalid Email or Password"
+                });
+            }
 
+            const result = compareSync(body.password, results.password)
+            
+            if(result){
+                results.password == undefined
+               const jsonToken =sign({result : results}, "babalao",{
+                   expiresIn: "1h"
+               });
 
+               return res.json({
+                   success:1,
+                   message: "Login Succesfull",
+                   token : jsonToken
+               });
+            }else{
+                return res.json({
+                    success: 0,
+                    message : "Invalid Email or Password"
+                });
 
+            }
+        });
+
+    }
 
 }
